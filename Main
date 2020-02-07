@@ -1,0 +1,113 @@
+var button=function(config){
+    this.x=config.x;
+    this.y=config.y;
+    this.w=config.w;
+    this.h=config.h;
+    this.do=config.do||function(){};
+};
+button.prototype.draw=function(){
+    fill(0,255,0);
+    rect(this.x,this.y,this.w,this.h,6);
+};
+button.prototype.check=function(){
+    return mouseX>this.x && mouseX<this.x+this.w && mouseY>this.y && mouseY<this.y+this.h;
+};
+button.prototype.click=function(){
+    if(this.check()){
+        this.do();
+    }
+};
+var money=0;
+var mps=0;
+var worker=0;
+var lobyist=0;
+var autodivide=0;
+var x=0;
+var y=399;
+var workercost=100;
+var lobyistcost=1000;
+var autocost=10000;
+background(235, 194, 111);
+var b1=new button({
+    x:90,
+    y:20,
+    w:90,
+    h:10,
+    do:function(){
+        if(money>=workercost){
+            worker+=1; 
+            workercost=workercost*1.15;
+            mps-=0.01;
+            money-=workercost/1.15;
+        }
+    }
+});
+var b2=new button({
+    x:90,
+    y:40,
+    w:90,
+    h:10,
+    do:function(){
+        if(money>=lobyistcost){
+            lobyist+=1; 
+            lobyistcost=lobyistcost*1.15;
+            mps+=0.1;
+            money-=lobyistcost/1.15;
+        }
+    }
+});
+var b3=new button({
+    x:90,
+    y:60,
+    w:90,
+    h:10,
+    do:function(){
+        if(money>=autocost){
+            autodivide+=1; 
+            autocost=autocost*1.15;
+            mps-=5;
+            money-=autocost/1.15;
+        }
+    }
+});
+var build=function(){
+    noStroke();
+    fill(128, 123, 123);
+    rect(x,y,1,1);
+        x+=1;
+    if(x>width){
+        x=0;
+        y-=1;
+    }
+    money+=1;
+};
+draw= function(){
+    noStroke();
+    fill(0, 187, 255);
+    rect(0,0,width,height/3);
+    fill(0,0,0);
+    text('money: $' + round(this.money),0,10);
+    text('money per tick: $' + this.mps,0,20);
+    text('workers: ' + this.worker,0,30);
+    text('lobyists: ' + this.lobyist,0,50);
+    text('auto-dividers: ' + this.autodivide,0,70);
+    b1.draw();
+    b2.draw();
+    b3.draw();
+    fill(0,0,0);
+    text('$' + round(this.workercost),90,30);
+    text('$' + round(this.lobyistcost),90,50);
+    text('$' + round(this.autocost),90,70);
+    money+=mps;
+    for(var h=0; h<autodivide; h++){
+        build();
+    }
+};
+mouseClicked=function(){
+    for(var i=0; i<=worker; i++){
+        build();
+    }
+    b1.click();
+    b2.click();
+    b3.click();
+};
